@@ -6,8 +6,8 @@
 </head>
 <body>
   <h1>Upload File</h1>
-  <form id="fileUploadForm">
-    <input type="file" id="fileInput" />
+  <form id="fileUploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" />
     <button type="submit">Upload</button>
   </form>
 
@@ -33,40 +33,29 @@
 
       document.getElementById("uploadStatus").innerText = "Uploading file...";
 
-      setTimeout(() => {
-        document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
-        const downloadLink = "https://your-bucket.s3.amazonaws.com/" + file.name;
-        document.getElementById("downloadLink").href = downloadLink;
-        document.getElementById("downloadLinkContainer").classList.remove("hidden");
+      const formData = new FormData();
+      formData.append("file", file);
 
-        const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
-        uploadedFiles.push(file.name);
-        localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
-        fileInput.value = '';
-        displayUploadedFiles();
-      }, 3000);
-    });
-
-    function displayUploadedFiles() {
-      const uploadedFilesList = document.getElementById("uploadedFilesList");
-      const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
-
-      uploadedFilesList.innerHTML = '';
-
-      uploadedFiles.forEach(fileName => {
-        const listItem = document.createElement("li");
-        const downloadLink = document.createElement("a");
-        downloadLink.href = "https://your-bucket.s3.amazonaws.com/" + fileName;
-        downloadLink.target = "_blank";
-        downloadLink.textContent = fileName;
-        listItem.appendChild(downloadLink);
-        uploadedFilesList.appendChild(listItem);
+      fetch("/upload", {  // Send the file to the Node.js backend
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
+          const downloadLink = data.fileUrl;
+          document.getElementById("downloadLink").href = downloadLink;
+          document.getElementById("downloadLinkContainer").classList.remove("hidden");
+        } else {
+          document.getElementById("uploadStatus").innerText = "File upload failed!";
+        }
+      })
+      .catch(error => {
+        document.getElementById("uploadStatus").innerText = "Error uploading file!";
+        console.error(error);
       });
-    }
-
-    window.onload = function() {
-      displayUploadedFiles();
-    };
+    });
   </script>
 </body>
 </html>
