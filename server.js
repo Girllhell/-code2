@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const AWS = require('aws-sdk');
-const fs = require('fs');
 const { v4: uuidv4 } = require('uuid'); // For generating unique file names
 
 const app = express();
@@ -22,6 +21,11 @@ const upload = multer({ storage: storage });
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Route to serve the index.html page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Serve the index.html file
+});
 
 // Route to handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
