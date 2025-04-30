@@ -3,6 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>File Upload</title>
+  <style>
+    .hidden {
+      display: none;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h3 {
+      color: #333;
+    }
+    #uploadStatus {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #downloadLink {
+      color: green;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
   <h1>Upload File</h1>
@@ -12,6 +32,7 @@
   </form>
 
   <p id="uploadStatus"></p>
+
   <div id="downloadLinkContainer" class="hidden">
     <a id="downloadLink" href="#" target="_blank">Download File</a>
   </div>
@@ -20,7 +41,6 @@
   <ul id="uploadedFilesList"></ul>
 
   <script>
-    // JS code اللي انت كتبته بالضبط
     document.getElementById("fileUploadForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
