@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload</title>
+</head>
+<body>
+  <h1>Upload File</h1>
+  <form id="fileUploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" />
+    <button type="submit">Upload</button>
+  </form>
+
+  <p id="uploadStatus"></p>
+  <div id="downloadLinkContainer" class="hidden">
+    <a id="downloadLink" href="#" target="_blank">Download File</a>
+  </div>
+
+  <h3>Uploaded Files:</h3>
+  <ul id="uploadedFilesList"></ul>
+
+  <script>
+    document.getElementById("fileUploadForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select a file to upload.");
+        return;
+      }
+
+      document.getElementById("uploadStatus").innerText = "Uploading file...";
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/upload", {  // Send the file to the Node.js backend
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
+          const downloadLink = data.fileUrl;
+          document.getElementById("downloadLink").href = downloadLink;
+          document.getElementById("downloadLinkContainer").classList.remove("hidden");
+        } else {
+          document.getElementById("uploadStatus").innerText = "File upload failed!";
+        }
+      })
+      .catch(error => {
+        document.getElementById("uploadStatus").innerText = "Error uploading file!";
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>
