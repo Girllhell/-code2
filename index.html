@@ -2,27 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Sharing App</title>
-  <link rel="stylesheet" href="style.css">
+  <title>File Upload</title>
 </head>
 <body>
-  <div class="container">
-    <h1>File Sharing</h1>
-    <form id="fileUploadForm">
-      <input type="file" id="fileInput" required>
-      <button type="submit">Upload File</button>
-    </form>
-    <div id="uploadStatus"></div>
-    <div id="downloadLinkContainer" class="hidden">
-      <h3>Download Link:</h3>
-      <a id="downloadLink" href="#" target="_blank">Download File</a>
-    </div>
-    <div id="uploadedFiles">
-      <h3>Uploaded Files:</h3>
-      <ul id="uploadedFilesList"></ul>
-    </div>
+  <h1>Upload File</h1>
+  <form id="fileUploadForm">
+    <input type="file" id="fileInput" />
+    <button type="submit">Upload</button>
+  </form>
+
+  <p id="uploadStatus"></p>
+  <div id="downloadLinkContainer" class="hidden">
+    <a id="downloadLink" href="#" target="_blank">Download File</a>
   </div>
-  <script src="server.js"></script>
+
+  <h3>Uploaded Files:</h3>
+  <ul id="uploadedFilesList"></ul>
+
+  <script>
+    // JS code اللي انت كتبته بالضبط
+    document.getElementById("fileUploadForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select a file to upload.");
+        return;
+      }
+
+      document.getElementById("uploadStatus").innerText = "Uploading file...";
+
+      setTimeout(() => {
+        document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
+        const downloadLink = "https://your-bucket.s3.amazonaws.com/" + file.name;
+        document.getElementById("downloadLink").href = downloadLink;
+        document.getElementById("downloadLinkContainer").classList.remove("hidden");
+
+        const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+        uploadedFiles.push(file.name);
+        localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+        fileInput.value = '';
+        displayUploadedFiles();
+      }, 3000);
+    });
+
+    function displayUploadedFiles() {
+      const uploadedFilesList = document.getElementById("uploadedFilesList");
+      const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+
+      uploadedFilesList.innerHTML = '';
+
+      uploadedFiles.forEach(fileName => {
+        const listItem = document.createElement("li");
+        const downloadLink = document.createElement("a");
+        downloadLink.href = "https://your-bucket.s3.amazonaws.com/" + fileName;
+        downloadLink.target = "_blank";
+        downloadLink.textContent = fileName;
+        listItem.appendChild(downloadLink);
+        uploadedFilesList.appendChild(listItem);
+      });
+    }
+
+    window.onload = function() {
+      displayUploadedFiles();
+    };
+  </script>
 </body>
 </html>
