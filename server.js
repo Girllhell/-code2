@@ -6,14 +6,14 @@ const { v4: uuidv4 } = require('uuid'); // For generating unique file names
 
 const app = express();
 
-// Configure AWS S3
 const s3 = new S3Client({
-  region: 'eu-north-1', // Replace with your AWS region, e.g., 'us-west-2'
+  region: process.env.AWS_REGION, // Ensure correct region from .env
   credentials: {
-    accessKeyId: 'AKIAZZL6YSTLWVX2MDL2', // Replace with your AWS access key
-    secretAccessKey: 'GQT/w67SMQfwmljcSqYiaIwkuhXE1WnC4HBYlpKQ', // Replace with your AWS secret key
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,  // Correct AWS Access Key
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // Correct AWS Secret Key
   },
 });
+
 
 // Set up Multer for file handling
 const storage = multer.memoryStorage(); // Store files in memory before uploading to S3
@@ -47,7 +47,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     console.log('Success', data);
 
     // Return the file URL after successful upload
-    const fileUrl = `https://${params.Bucket}.s3.amazonaws.com/${fileName}`;
+const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
     res.json({
       success: true,
       fileUrl: fileUrl, // URL of the uploaded file
