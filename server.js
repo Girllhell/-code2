@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
@@ -7,12 +8,13 @@ const { v4: uuidv4 } = require('uuid'); // For generating unique file names
 const app = express();
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION, // Ensure correct region from .env
+  region: process.env.AWS_REGION,  // Use the region from .env
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,  // Correct AWS Access Key
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // Correct AWS Secret Key
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,  // AWS Access Key
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,  // AWS Secret Key
   },
 });
+
 
 
 // Set up Multer for file handling
@@ -33,7 +35,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   const fileName = `${uuidv4()}-${file.originalname}`; // Unique file name to avoid collisions
 
   const params = {
-    Bucket: 'file-sharing-bucket-girllhell', // Replace with your actual S3 bucket name
+    Bucket: process.env.file-sharing-bucket-girllhell, // Replace with your actual S3 bucket name
     Key: fileName, // File name to be stored in S3
     Body: file.buffer, // File data
     ContentType: file.mimetype, // Set the content type (MIME type)
