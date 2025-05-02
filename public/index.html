@@ -12,6 +12,9 @@
   </form>
 
   <p id="uploadStatus"></p>
+  <div id="downloadLinkContainer" class="hidden">
+    <a id="downloadLink" href="#" target="_blank">Download File</a>
+  </div>
 
   <h3>Uploaded Files:</h3>
   <ul id="uploadedFilesList"></ul>
@@ -41,7 +44,9 @@
       .then(data => {
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
-          loadUploadedFiles(); // ✅ Update the list after upload
+          const downloadLink = data.fileUrl;
+          document.getElementById("downloadLink").href = downloadLink;
+          document.getElementById("downloadLinkContainer").classList.remove("hidden");
         } else {
           document.getElementById("uploadStatus").innerText = "File upload failed!";
         }
@@ -52,7 +57,9 @@
       });
     });
 
-    // ✅ Function to load uploaded files from backend
+    // Load uploaded files on page load
+    window.onload = loadUploadedFiles;
+
     function loadUploadedFiles() {
       fetch('/files')
         .then(response => response.json())
@@ -64,7 +71,6 @@
               const li = document.createElement('li');
               const link = document.createElement('a');
               link.href = file.url;
-              link.download = file.name;  // This line makes the file download directly
               link.textContent = file.name;
               li.appendChild(link);
               list.appendChild(li);
@@ -78,9 +84,6 @@
           document.getElementById('uploadedFilesList').innerHTML = '<li>Failed to fetch files</li>';
         });
     }
-
-    // ✅ Load uploaded files on page load
-    window.onload = loadUploadedFiles;
   </script>
 </body>
 </html>
