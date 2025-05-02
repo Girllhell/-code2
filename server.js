@@ -9,7 +9,7 @@ const app = express();
 
 // Configure AWS SDK v3 with environment variables
 const s3 = new S3Client({
-  region: process.env.AWS_REGION, // Set the region for your S3 bucket
+  region: process.env.AWS_REGION || 'eu-north-1', // Set the region for your S3 bucket
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Your AWS Access Key ID
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // Your AWS Secret Access Key
@@ -53,7 +53,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     await s3.send(new PutObjectCommand(params));
 
     // Generate the public URL for the uploaded file
-    const fileUrl = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+    const fileUrl = `https://${params.Bucket}.s3.${process.env.AWS_REGION || 'eu-north-1'}.amazonaws.com/${fileName}`;
 
     // Respond with the file URL
     res.json({ success: true, fileUrl });
@@ -67,4 +67,3 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
-
