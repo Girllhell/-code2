@@ -13,7 +13,7 @@
 
   <p id="uploadStatus"></p>
   <div id="downloadLinkContainer" class="hidden">
-    <a id="downloadLink" href="#" target="_blank">Download File</a>
+    <a id="downloadLink" href="#" download>Download File</a>
   </div>
 
   <h3>Uploaded Files:</h3>
@@ -45,7 +45,9 @@
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
           const downloadLink = data.fileUrl;
-          document.getElementById("downloadLink").href = downloadLink;
+          const linkElement = document.getElementById("downloadLink");
+          linkElement.href = downloadLink;
+          linkElement.setAttribute("download", file.name); // ⬅️ لتحميل الملف مباشرة
           document.getElementById("downloadLinkContainer").classList.remove("hidden");
           loadUploadedFiles(); // ✅ Update the list after upload
         } else {
@@ -70,8 +72,8 @@
               const li = document.createElement('li');
               const link = document.createElement('a');
               link.href = file.url;
-              link.target = '_blank';
               link.textContent = file.name;
+              link.setAttribute('download', file.name); // ⬅️ تحميل مباشر من القائمة
               li.appendChild(link);
               list.appendChild(li);
             });
