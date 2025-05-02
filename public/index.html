@@ -45,9 +45,7 @@
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
           const downloadLink = data.fileUrl;
-          const linkElement = document.getElementById("downloadLink");
-          linkElement.href = downloadLink;
-          linkElement.setAttribute("download", file.name); // ⬅️ لتحميل الملف مباشرة
+          document.getElementById("downloadLink").href = downloadLink;
           document.getElementById("downloadLinkContainer").classList.remove("hidden");
           loadUploadedFiles(); // ✅ Update the list after upload
         } else {
@@ -72,8 +70,8 @@
               const li = document.createElement('li');
               const link = document.createElement('a');
               link.href = file.url;
+              link.download = file.name;  // This line makes the file download directly
               link.textContent = file.name;
-              link.setAttribute('download', file.name); // ⬅️ تحميل مباشر من القائمة
               li.appendChild(link);
               list.appendChild(li);
             });
