@@ -6,21 +6,20 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
+// AWS SDK setup
 const s3 = new S3Client({
-  region: 'eu-north-1',
+  region: 'eu-north-1',  // Set your S3 region
+  // IAM role setup will automatically pick up the correct credentials
 });
 
-// Multer config
+// Multer setup for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// Serve static files (if you want to serve frontend files)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// ✅ Route: Upload file to S3
+// Upload route: Handles the file upload to S3
 app.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
 
@@ -31,7 +30,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   const fileName = `${uuidv4()}-${file.originalname}`;
 
   const params = {
-    Bucket: 'file-sharing-bucket-girllhell',
+    Bucket: 'file-sharing-bucket-girllhell',  // Your S3 bucket name
     Key: fileName,
     Body: file.buffer,
     ContentType: file.mimetype,
@@ -49,7 +48,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// ✅ Route: Get list of uploaded files
+// Get list of uploaded files
 app.get('/files', async (req, res) => {
   try {
     const data = await s3.send(new ListObjectsV2Command({
@@ -70,6 +69,7 @@ app.get('/files', async (req, res) => {
   }
 });
 
+// Start the server
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
