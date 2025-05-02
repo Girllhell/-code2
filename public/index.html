@@ -13,7 +13,8 @@
 
   <p id="uploadStatus"></p>
   <div id="downloadLinkContainer" class="hidden">
-    <a id="downloadLink" href="#" target="_blank">Download File</a>
+    <!-- هنا، نضيف سمة download لعنصر الرابط لكي يبدأ التحميل مباشرة -->
+    <a id="downloadLink" href="#" download>Download File</a>
   </div>
 
   <h3>Uploaded Files:</h3>
@@ -71,6 +72,7 @@
               const li = document.createElement('li');
               const link = document.createElement('a');
               link.href = file.url;
+              link.download = file.name; // Add download attribute here to enable automatic download
               link.textContent = file.name;
               li.appendChild(link);
               list.appendChild(li);
