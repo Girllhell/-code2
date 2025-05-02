@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
@@ -13,7 +14,14 @@ AWS.config.update({
   region: 'YOUR_AWS_REGION'  // Replace with your AWS region, e.g., 'us-west-2'
 });
 
-const s3 = new AWS.S3();
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
 
 // Set up Multer for file handling
 const storage = multer.memoryStorage(); // Store files in memory before uploading to S3
@@ -32,14 +40,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
   const fileName = `${uuidv4()}-${file.originalname}`; // Unique file name to avoid collisions
 
-  const params = {
-    Bucket: 'your-bucket-name', // Replace with your actual S3 bucket name
-    Key: fileName,              // File name to be stored in S3
-    Body: file.buffer,          // File data
-    ContentType: file.mimetype, // Set the content type (MIME type)
-    ACL: 'public-read',         // Make file publicly accessible
-  };
-
+const params = {
+  Bucket: process.env.AWS_BUCKET_NAME,
+  Key: fileName,
+  Body: file.buffer,
+  ContentType: file.mimetype,
+  ACL: 'public-read',
+};
   // Upload file to S3
   s3.upload(params, (err, data) => {
     if (err) {
