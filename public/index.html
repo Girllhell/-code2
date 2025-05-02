@@ -13,7 +13,7 @@
 
   <p id="uploadStatus"></p>
   <div id="downloadLinkContainer" class="hidden">
-    <!-- هنا، نضيف سمة download لعنصر الرابط لكي يبدأ التحميل مباشرة -->
+    <!-- هنا نعرض الرابط الذي يتيح للمستخدم تنزيل الملف -->
     <a id="downloadLink" href="#" download>Download File</a>
   </div>
 
@@ -45,7 +45,7 @@
       .then(data => {
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
-          const downloadLink = data.fileUrl;
+          const downloadLink = `/download/${data.fileName}`;  // رابط التنزيل باستخدام اسم الملف
           document.getElementById("downloadLink").href = downloadLink;
           document.getElementById("downloadLinkContainer").classList.remove("hidden");
         } else {
@@ -71,8 +71,7 @@
             data.files.forEach(file => {
               const li = document.createElement('li');
               const link = document.createElement('a');
-              link.href = file.url;
-              link.download = file.name; // Add download attribute here to enable automatic download
+              link.href = `/download/${file.name}`;  // المسار الجديد لتحميل الملف
               link.textContent = file.name;
               li.appendChild(link);
               list.appendChild(li);
