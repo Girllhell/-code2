@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
-const { S3Client, PutObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
@@ -66,6 +66,29 @@ app.get('/files', async (req, res) => {
   } catch (err) {
     console.error('Error listing files:', err);
     res.status(500).json({ success: false, message: 'Failed to list files' });
+  }
+});
+
+// Download route: Forcing file download
+app.get('/download/:filename', async (req, res) => {
+  const { filename } = req.params;
+
+  const params = {
+    Bucket: 'file-sharing-bucket-girllhell',
+    Key: filename,
+  };
+
+  try {
+    const data = await s3.send(new GetObjectCommand(params));
+
+    // Force download
+    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-Type', data.ContentType);
+
+    data.Body.pipe(res);
+  } catch (err) {
+    console.error('Error fetching file:', err);
+    res.status(500).json({ success: false, message: 'Failed to download file' });
   }
 });
 
