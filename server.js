@@ -41,7 +41,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     Key: fileName, // File name on S3
     Body: file.buffer, // The file data (from memory storage)
     ContentType: file.mimetype, // Content type (e.g., image/jpeg)
-    ACL: 'public-read', // Set the file to be publicly readable
+    //ACL: 'public-read', // Set the file to be publicly readable
   };
 
   try {
