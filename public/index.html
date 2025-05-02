@@ -12,9 +12,6 @@
   </form>
 
   <p id="uploadStatus"></p>
-  <div id="downloadLinkContainer" class="hidden">
-    <a id="downloadLink" href="#" download>Download File</a>
-  </div>
 
   <h3>Uploaded Files:</h3>
   <ul id="uploadedFilesList"></ul>
@@ -44,9 +41,6 @@
       .then(data => {
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
-          const downloadLink = data.fileUrl;
-          document.getElementById("downloadLink").href = downloadLink;
-          document.getElementById("downloadLinkContainer").classList.remove("hidden");
           loadUploadedFiles(); // ✅ Update the list after upload
         } else {
           document.getElementById("uploadStatus").innerText = "File upload failed!";
