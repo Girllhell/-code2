@@ -2,23 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #fileUploadForm {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #uploadStatus {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    #uploadedFilesList {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #uploadedFilesList li {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #uploadedFilesList li a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #uploadedFilesList li a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
 </head>
 <body>
-  <h1>Upload File</h1>
-  <form id="fileUploadForm" enctype="multipart/form-data">
-    <input type="file" id="fileInput" name="file" />
-    <button type="submit">Upload</button>
-  </form>
+  <header>
+    <h1>File Upload and Download</h1>
+  </header>
 
-  <p id="uploadStatus"></p>
-  <div id="downloadLinkContainer" class="hidden">
-    <!-- هنا نعرض الرابط الذي يتيح للمستخدم تنزيل الملف -->
-    <a id="downloadLink" href="#" download>Download File</a>
+  <div class="container">
+    <h2>Upload a File</h2>
+    <form id="fileUploadForm" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" />
+      <button type="submit">Upload</button>
+    </form>
+
+    <p id="uploadStatus"></p>
+
+    <h3>Uploaded Files:</h3>
+    <ul id="uploadedFilesList"></ul>
   </div>
-
-  <h3>Uploaded Files:</h3>
-  <ul id="uploadedFilesList"></ul>
 
   <script>
     document.getElementById("fileUploadForm").addEventListener("submit", function(event) {
@@ -45,9 +136,7 @@
       .then(data => {
         if (data.success) {
           document.getElementById("uploadStatus").innerText = "File uploaded successfully!";
-          const downloadLink = `/download/${data.fileName}`;  // رابط التنزيل باستخدام اسم الملف
-          document.getElementById("downloadLink").href = downloadLink;
-          document.getElementById("downloadLinkContainer").classList.remove("hidden");
+          loadUploadedFiles(); // Load files again to refresh list
         } else {
           document.getElementById("uploadStatus").innerText = "File upload failed!";
         }
@@ -71,7 +160,7 @@
             data.files.forEach(file => {
               const li = document.createElement('li');
               const link = document.createElement('a');
-              link.href = `/download/${file.name}`;  // المسار الجديد لتحميل الملف
+              link.href = `/download/${file.name}`;
               link.textContent = file.name;
               li.appendChild(link);
               list.appendChild(li);
