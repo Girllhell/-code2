@@ -7,13 +7,10 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
-// Configure AWS SDK v3 with environment variables
+// Configure AWS SDK v3 with IAM Role (No need for accessKeyId and secretAccessKey if using IAM Role)
 const s3 = new S3Client({
   region: process.env.AWS_REGION || 'eu-north-1', // Set the region for your S3 bucket
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Your AWS Access Key ID
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // Your AWS Secret Access Key
-  },
+  // No need for accessKeyId and secretAccessKey when using IAM Role on EC2
 });
 
 // Set up Multer to store files in memory
