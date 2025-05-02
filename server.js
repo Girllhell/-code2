@@ -3,11 +3,11 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { v4: uuidv4 } = require('uuid'); // Unique filenames
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
-// AWS S3 Configuration using environment variables
+// Configure AWS SDK v3
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -16,21 +16,26 @@ const s3 = new S3Client({
   },
 });
 
-// Set up multer for file uploads (in memory)
+// Set up Multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Serve static frontend files
+// Serve static files from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the upload page
+// Serve the index.html page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Upload endpoint
+// Upload route
 app.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ success: false, message: 'No file uploaded' });
+  }
+
   const fileName = `${uuidv4()}-${file.originalname}`;
 
   const params = {
@@ -51,7 +56,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// Start the server
+// Start server
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
