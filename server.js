@@ -1,4 +1,3 @@
-require('dotenv').config(); // Load environment variables
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
@@ -9,7 +8,7 @@ const app = express();
 
 // Configure AWS SDK v3 with IAM Role (No need for accessKeyId and secretAccessKey if using IAM Role)
 const s3 = new S3Client({
-  region: process.env.AWS_REGION || 'eu-north-1', // Set the region for your S3 bucket
+  region: 'eu-north-1', // Set the region for your S3 bucket
   // No need for accessKeyId and secretAccessKey when using IAM Role on EC2
 });
 
@@ -38,7 +37,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
   // Define the parameters for uploading to S3
   const params = {
-    Bucket: process.env.AWS_BUCKET_NAME, // Your S3 Bucket name
+    Bucket: 'file-sharing-bucket-girllhell', // Your S3 Bucket name
     Key: fileName, // File name on S3
     Body: file.buffer, // The file data (from memory storage)
     ContentType: file.mimetype, // Content type (e.g., image/jpeg)
@@ -50,7 +49,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     await s3.send(new PutObjectCommand(params));
 
     // Generate the public URL for the uploaded file
-    const fileUrl = `https://${params.Bucket}.s3.${process.env.AWS_REGION || 'eu-north-1'}.amazonaws.com/${fileName}`;
+    const fileUrl = `https://${params.Bucket}.s3.${'eu-north-1'}.amazonaws.com/${fileName}`;
 
     // Respond with the file URL
     res.json({ success: true, fileUrl });
