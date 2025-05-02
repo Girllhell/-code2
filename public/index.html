@@ -36,7 +36,7 @@
       const formData = new FormData();
       formData.append("file", file);
 
-      fetch("/upload", {  // Send the file to the Node.js backend
+      fetch("/upload", {
         method: "POST",
         body: formData
       })
@@ -47,6 +47,7 @@
           const downloadLink = data.fileUrl;
           document.getElementById("downloadLink").href = downloadLink;
           document.getElementById("downloadLinkContainer").classList.remove("hidden");
+          loadUploadedFiles(); // ✅ Update the list after upload
         } else {
           document.getElementById("uploadStatus").innerText = "File upload failed!";
         }
@@ -56,6 +57,36 @@
         console.error(error);
       });
     });
+
+    // ✅ Function to load uploaded files from backend
+    function loadUploadedFiles() {
+      fetch('/files')
+        .then(response => response.json())
+        .then(data => {
+          const list = document.getElementById('uploadedFilesList');
+          list.innerHTML = ''; // Clear list
+          if (data.success) {
+            data.files.forEach(file => {
+              const li = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = file.url;
+              link.target = '_blank';
+              link.textContent = file.name;
+              li.appendChild(link);
+              list.appendChild(li);
+            });
+          } else {
+            list.innerHTML = '<li>Error loading files</li>';
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching files:', err);
+          document.getElementById('uploadedFilesList').innerHTML = '<li>Failed to fetch files</li>';
+        });
+    }
+
+    // ✅ Load uploaded files on page load
+    window.onload = loadUploadedFiles;
   </script>
 </body>
 </html>
