@@ -79,16 +79,30 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out; /* Animation for hover */
     }
 
     #uploadedFilesList li a {
-      color: #4CAF50;
+      display: inline-block;
+      padding: 12px 20px;
+      background-color: #4CAF50;
+      color: white;
       text-decoration: none;
       font-weight: bold;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease; /* Animation */
     }
 
     #uploadedFilesList li a:hover {
-      text-decoration: underline;
+      background-color: #45a049;
+      transform: scale(1.05); /* Scale up effect */
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Shadow effect */
+    }
+
+    #uploadedFilesList li a:active {
+      transform: scale(0.98); /* Slight scale down effect on click */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
   </style>
